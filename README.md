@@ -34,6 +34,13 @@ Rode o frontend (Streamlit):
 streamlit run src/views/home.py
 ```
 
+Ou via Docker:
+
+```bash
+docker build -t bootcamp-iii .
+docker run -p 80:80 bootcamp-iii
+```
+
 ## Ferramentas de desenvolvimento
 
 Formatar o código:
