@@ -3,7 +3,6 @@ repos:
     rev: 24.4.2
     hooks:
       - id: black
-        args: [--check]
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
