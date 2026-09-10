@@ -18,6 +18,15 @@ dev = [
     "isort",
     "flake8",
     "pre-commit",
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+markers = [
+    "unit: unit tests that do not depend on external services",
+    "integration: integration tests that exercise the app end-to-end",
 ]
 
 [tool.setuptools]
