@@ -74,3 +74,29 @@ pre-commit install
 ```bash
 pytest test/unit
 ```
+
+## Estrutura arquitetural inicial
+
+A aplicação evolui sobre a base MVC existente e separa regras financeiras da interface:
+
+```text
+src/
+├── models/        # entidades do domínio financeiro
+├── services/      # casos de uso e regras de negócio
+├── repositories/  # contratos e adaptadores de persistência
+├── controllers/   # coordenação entre UI e aplicação
+├── views/         # interface Streamlit
+└── shared/        # tipos/erros compartilhados, incluindo dinheiro
+
+specs/            # fonte de verdade do fluxo SDD
+docs/adr/          # decisões arquiteturais
+test/
+├── unit/
+├── integration/
+├── contract/
+└── fixtures/
+```
+
+A especificação funcional inicial está em `specs/SPEC-001-financial-control.md` e contém
+os requisitos RF-001 a RF-006. Agentes de IA atuam como camada de revisão; regras de
+autoridade e contexto estão em `AGENTS.md`.
