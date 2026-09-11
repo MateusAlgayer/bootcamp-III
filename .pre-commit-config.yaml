@@ -1,16 +1,94 @@
+minimum_pre_commit_version: "4.0.0"
+
+default_stages:
+  - pre-commit
+
 repos:
+  # ---------------------------------------------------------------------------
+  # Repository hygiene
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+      - id: check-case-conflict
+
+      - id: check-merge-conflict
+
+      - id: check-toml
+
+      - id: check-yaml
+
+      - id: detect-private-key
+
+      - id: end-of-file-fixer
+
+      - id: trailing-whitespace
+
+  # ---------------------------------------------------------------------------
+  # Secrets
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+
+  # ---------------------------------------------------------------------------
+  # Formatting
+  # ---------------------------------------------------------------------------
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 26.5.1
     hooks:
       - id: black
+        args:
+          - --check
 
+  # ---------------------------------------------------------------------------
+  # Imports
+  # ---------------------------------------------------------------------------
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 6.1.0
     hooks:
       - id: isort
-        args: [--check-only]
+        args:
+          - --check-only
 
+  # ---------------------------------------------------------------------------
+  # Lint
+  # ---------------------------------------------------------------------------
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
+        args:
+          - --max-line-length=88
+          - --extend-ignore=E203,W503
+
+  # ---------------------------------------------------------------------------
+  # Project-local gates
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy strict
+        entry: .venv/bin/python -m mypy src --strict
+        language: system
+        pass_filenames: false
+
+      - id: bandit
+        name: bandit SAST
+        entry: .venv/bin/python -m bandit -c pyproject.toml -r src
+        language: system
+        pass_filenames: false
+        stages:
+          - pre-push
+
+      - id: pip-audit
+        name: dependency audit
+        entry: .venv/bin/python -m pip_audit
+        language: system
+        pass_filenames: false
+        stages:
+          - pre-push
