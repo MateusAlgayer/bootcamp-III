@@ -1,6 +1,10 @@
 name: CI
 
 on:
+  # Qualquer push em qualquer branch.
+  push:
+
+  # PRs destinados às branches protegidas.
   pull_request:
     branches:
       - main
@@ -11,24 +15,31 @@ on:
       - reopened
       - ready_for_review
 
-  push:
-    branches:
-      - main
-      - dev
+  # Permite execução manual pela interface do GitHub.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   PYTHON_VERSION: "3.12"
 
+# Se outro commit chegar na mesma branch/PR, cancela a execução anterior.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
-    name: Quality
+  # ===========================================================================
+  # PUSH VALIDATION
+  #
+  # Executado em qualquer git push, independentemente da branch.
+  # Esses checks dão feedback antecipado, mas NÃO serão required checks de merge.
+  # ===========================================================================
+
+  push-quality:
+    name: Push Quality
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -54,16 +65,17 @@ jobs:
         run: isort --check-only src test
 
       - name: Flake8
-        run: flake8 --max-line-length=88 --extend-ignore=E203,W503 src test
+        run: flake8 src test
 
-      - name: MyPy
+      - name: MyPy strict
         run: mypy src --strict
 
       - name: Pre-commit
         run: pre-commit run --all-files
 
-  security:
-    name: Security
+  push-security:
+    name: Push Security
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -82,12 +94,15 @@ jobs:
       - name: Install project
         run: python -m pip install -e ".[dev]"
 
+      # SAST — Static Application Security Testing
       - name: Bandit SAST
         run: bandit -c pyproject.toml -r src
 
-      - name: Dependency audit
+      # SCA — Software Composition Analysis
+      - name: pip-audit SCA
         run: pip-audit
 
+      # SBOM — Software Bill of Materials
       - name: Generate SBOM
         run: |
           mkdir -p artifacts
@@ -97,11 +112,12 @@ jobs:
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: sbom
+          name: push-sbom
           path: artifacts/sbom.json
 
-  tests:
-    name: Tests
+  push-tests:
+    name: Push Tests
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -123,13 +139,14 @@ jobs:
       - name: Run test harness
         run: pytest test
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
+  push-coverage:
+    name: Push Coverage
+    if: github.event_name == 'push'
     needs:
-      - quality
-      - security
-      - tests
+      - push-quality
+      - push-security
+      - push-tests
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -160,11 +177,164 @@ jobs:
       - name: Upload coverage HTML
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-html
+          name: push-coverage-html
           path: htmlcov
 
       - name: Upload coverage XML
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
+          name: push-coverage-xml
+          path: coverage.xml
+
+  # ===========================================================================
+  # PULL REQUEST GATES
+  #
+  # Executados somente para PR -> dev ou PR -> main.
+  # Estes serão posteriormente configurados como REQUIRED STATUS CHECKS.
+  # ===========================================================================
+
+  pr-quality:
+    name: PR Quality
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Black
+        run: black --check src test
+
+      - name: isort
+        run: isort --check-only src test
+
+      - name: Flake8
+        run: flake8 src test
+
+      - name: MyPy strict
+        run: mypy src --strict
+
+      - name: Pre-commit
+        run: pre-commit run --all-files
+
+  pr-security:
+    name: PR Security
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Bandit SAST
+        run: bandit -c pyproject.toml -r src
+
+      - name: pip-audit SCA
+        run: pip-audit
+
+      - name: Generate SBOM
+        run: |
+          mkdir -p artifacts
+          cyclonedx-py environment \
+            --output-file artifacts/sbom.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-sbom
+          path: artifacts/sbom.json
+
+  pr-tests:
+    name: PR Tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run test harness
+        run: pytest test
+
+  pr-coverage:
+    name: PR Coverage
+    if: github.event_name == 'pull_request'
+    needs:
+      - pr-quality
+      - pr-security
+      - pr-tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+
+      - name: Coverage gate
+        run: |
+          pytest test \
+            --cov=src \
+            --cov-branch \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --cov-report=html \
+            --cov-fail-under=85
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-coverage-html
+          path: htmlcov
+
+      - name: Upload coverage XML
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-coverage-xml
           path: coverage.xml
