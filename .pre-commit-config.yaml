@@ -73,13 +73,13 @@ repos:
     hooks:
       - id: mypy
         name: mypy strict
-        entry: .venv/bin/python -m mypy src --strict
+        entry: python -m mypy src --strict
         language: system
         pass_filenames: false
 
       - id: bandit
         name: bandit SAST
-        entry: .venv/bin/python -m bandit -c pyproject.toml -r src
+        entry: python -m bandit -c pyproject.toml -r src
         language: system
         pass_filenames: false
         stages:
@@ -87,7 +87,7 @@ repos:
 
       - id: pip-audit
         name: dependency audit
-        entry: .venv/bin/python -m pip_audit
+        entry: python -m pip_audit
         language: system
         pass_filenames: false
         stages:
