@@ -1,6 +1,8 @@
-# bootcamp-III
+# ResetMoney — Controle Financeiro Web
 
-Repositório para tarefas relacionadas a disciplina de bootcamp III
+Aplicação web para registrar e categorizar movimentações financeiras, calcular saldo,
+consolidar um resumo mensal e controlar um limite/orçamento mensal, desenvolvida como
+atividade da disciplina de bootcamp III.
 
 ## Configuração
 
@@ -100,3 +102,13 @@ test/
 A especificação funcional inicial está em `specs/SPEC-001-financial-control.md` e contém
 os requisitos RF-001 a RF-006. Agentes de IA atuam como camada de revisão; regras de
 autoridade e contexto estão em `AGENTS.md`.
+
+## ADRs
+
+Decisões arquiteturais relevantes ficam registradas em `docs/adr/`:
+
+- [ADR-001 — Arquitetura em camadas sobre a base MVC](docs/adr/ADR-001-layered-architecture.md)
+- [ADR-002 — Representação monetária exata](docs/adr/ADR-002-money-representation.md)
+- [ADR-003 — Agentes de IA como camada de revisão](docs/adr/ADR-003-ai-review-layer.md)
+- [ADR-004 — Hierarquia de exceções de domínio/aplicação](docs/adr/ADR-004-domain-error-handling.md)
+- [ADR-005 — Gates de qualidade e segurança como política de CI](docs/adr/ADR-005-ci-quality-security-gates.md)
