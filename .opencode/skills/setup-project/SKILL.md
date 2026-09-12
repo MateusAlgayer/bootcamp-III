@@ -11,7 +11,7 @@ Use quando o usuário pedir para configurar/inicializar o projeto, criar o ambie
 
 - `pyproject.toml` — dependências e config de black/isort/flake8 (layout `src/`, Python 3.12+)
 - `configure.py` — script cross-platform que executa toda a configuração
-- `src/` — código dividido em MVC: `views/`, `controllers/`, `models/`
+- `src/` — MVC preservado e complementado por `services/`, `repositories/` e `shared/`
 - `test/unit/` — testes
 - `.pre-commit-config.yaml` — hooks black (check), isort (check-only) e flake8
 - `Dockerfile` — imagem `python:3.12-alpine` que roda o Streamlit na porta 80
