@@ -30,26 +30,26 @@ from shared.money import (
 
 
 @pytest.mark.unit
-def test_money_from_string_preserves_decimal_precision():
+def test_money_from_string_preserves_decimal_precision() -> None:
     value = Money("10.10")
     assert value.amount == Decimal("10.10")
     assert str(value) == "10.10"
 
 
 @pytest.mark.unit
-def test_money_rejects_float():
+def test_money_rejects_float() -> None:
     with pytest.raises((TypeError, ValueError)):
         Money(1.5)
 
 
 @pytest.mark.unit
-def test_money_rejects_float_in_conversion():
+def test_money_rejects_float_in_conversion() -> None:
     with pytest.raises((TypeError, ValueError)):
         to_decimal(0.1)
 
 
 @pytest.mark.unit
-def test_money_arithmetic_is_exact():
+def test_money_arithmetic_is_exact() -> None:
     total = Money("0.10") + Money("0.20")
     assert total == Money("0.30")
     assert total - Money("0.05") == Money("0.25")
@@ -57,14 +57,14 @@ def test_money_arithmetic_is_exact():
 
 
 @pytest.mark.unit
-def test_money_from_cents():
+def test_money_from_cents() -> None:
     value = Money(cents=1234)
     assert value == Money("12.34")
     assert value.cents == 1234
 
 
 @pytest.mark.unit
-def test_decimal_and_cents_conversions():
+def test_decimal_and_cents_conversions() -> None:
     assert decimal_to_cents(Decimal("12.34")) == 1234
     assert to_cents("12.34") == 1234
     assert cents_to_decimal(1234) == Decimal("12.34")
@@ -73,7 +73,7 @@ def test_decimal_and_cents_conversions():
 
 
 @pytest.mark.unit
-def test_money_compatibility_helpers():
+def test_money_compatibility_helpers() -> None:
     assert parse_decimal("1.23") == Decimal("1.23")
     assert parse_money("1.23") == Money("1.23")
     assert to_money("1.23") == Money("1.23")
@@ -85,7 +85,7 @@ def test_money_compatibility_helpers():
 
 
 @pytest.mark.unit
-def test_money_predicates():
+def test_money_predicates() -> None:
     value = Money("1.23")
     assert is_money(value) is True
     assert is_money(Decimal("1.23")) is False
@@ -95,24 +95,24 @@ def test_money_predicates():
 
 
 @pytest.mark.unit
-def test_money_brazilian_string_format():
+def test_money_brazilian_string_format() -> None:
     assert Money("1.234,56") == Money("1234.56")
 
 
 @pytest.mark.unit
-def test_money_zero_and_quantum():
+def test_money_zero_and_quantum() -> None:
     assert Money("0") == Money("0.00")
     assert MONEY_QUANTUM == Decimal("0.01")
 
 
 @pytest.mark.unit
-def test_money_cents_rounding():
+def test_money_cents_rounding() -> None:
     assert decimal_to_cents(Decimal("1.005")) == 100
     assert decimal_to_cents(Decimal("1.006")) == 101
 
 
 @pytest.mark.unit
-def test_money_wrong_inputs_raise():
+def test_money_wrong_inputs_raise() -> None:
     for bad in ("", "abc", "R$", "NaN", "Infinity"):
         with pytest.raises((TypeError, ValueError, ArithmeticError)):
             Money(bad)
@@ -123,13 +123,13 @@ def test_money_wrong_inputs_raise():
 
 
 @pytest.mark.unit
-def test_money_rejects_bool():
+def test_money_rejects_bool() -> None:
     with pytest.raises((TypeError, ValueError)):
         Money(True)
 
 
 @pytest.mark.unit
-def test_money_conversion_from_objects():
+def test_money_conversion_from_objects() -> None:
     class WithAmount:
         amount = "2.50"
 
@@ -145,12 +145,12 @@ def test_money_conversion_from_objects():
     assert _minor_conversion(WithCents())
 
 
-def _minor_conversion(obj):
+def _minor_conversion(obj: object) -> bool:
     return to_cents(obj) == 450
 
 
 @pytest.mark.unit
-def test_money_kwargs_constructors():
+def test_money_kwargs_constructors() -> None:
     assert Money(decimal="1.25") == Money("1.25")
     assert Money(value_decimal="2.25") == Money("2.25")
     assert money("1.00", decimal="3.00") == Money("3.00")
@@ -158,7 +158,7 @@ def test_money_kwargs_constructors():
 
 
 @pytest.mark.unit
-def test_money_all_arithmetic_operators():
+def test_money_all_arithmetic_operators() -> None:
     left = Money("5.00")
     right = Money("2.00")
     assert left + right == Money("7.00")
@@ -178,7 +178,7 @@ def test_money_all_arithmetic_operators():
 
 
 @pytest.mark.unit
-def test_money_from_string_helpers():
+def test_money_from_string_helpers() -> None:
     assert Money.from_decimal(Decimal("1.23")) == Money("1.23")
     assert Money.from_string("1.23") == Money("1.23")
     assert Money.from_number(123) == Money("123")
@@ -189,7 +189,7 @@ def test_money_from_string_helpers():
 
 
 @pytest.mark.unit
-def test_money_methods_and_properties():
+def test_money_methods_and_properties() -> None:
     value = Money("1.23")
     assert value.value == Decimal("1.23")
     assert value.cents == 123
@@ -201,13 +201,13 @@ def test_money_methods_and_properties():
 
 
 @pytest.mark.unit
-def test_money_r_currency_format():
+def test_money_r_currency_format() -> None:
     assert Money("R$ 1.234,56") == Money("1234.56")
     assert Money("R$10") == Money("10")
 
 
 @pytest.mark.unit
-def test_money_nonfinite_rejected():
+def test_money_nonfinite_rejected() -> None:
     with pytest.raises((TypeError, ValueError)):
         Money(Decimal("NaN"))
     with pytest.raises((TypeError, ValueError)):
@@ -215,14 +215,14 @@ def test_money_nonfinite_rejected():
 
 
 @pytest.mark.unit
-def test_reject_float_function():
+def test_reject_float_function() -> None:
     with pytest.raises((TypeError, ValueError)):
         reject_float(1.0)
     reject_float(1)
 
 
 @pytest.mark.unit
-def test_money_alias_names_work():
+def test_money_alias_names_work() -> None:
     from shared.money import (
         MoneyDecimal,
         MoneyPrimitive,
@@ -239,13 +239,13 @@ def test_money_alias_names_work():
 
 
 @pytest.mark.unit
-def test_cents_to_decimal_quantizes():
+def test_cents_to_decimal_quantizes() -> None:
     assert cents_to_decimal(1) == Decimal("0.01")
     assert cents_to_decimal(1234) == Decimal("12.34")
 
 
 @pytest.mark.unit
-def test_invalid_money_value_errors_are_value_and_type_errors():
+def test_invalid_money_value_errors_are_value_and_type_errors() -> None:
     exc = InvalidMoneyValueError("boom")
     assert isinstance(exc, ValueError)
     assert isinstance(exc, TypeError)
@@ -253,7 +253,7 @@ def test_invalid_money_value_errors_are_value_and_type_errors():
 
 
 @pytest.mark.unit
-def test_money_additional_constructors_and_aliases():
+def test_money_additional_constructors_and_aliases() -> None:
     from shared.money import (
         as_money,
         coerce_money,

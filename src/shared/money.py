@@ -15,7 +15,7 @@ from decimal import (
     Decimal,
     InvalidOperation,
 )
-from typing import Any
+from typing import Any, Union
 
 MONEY_QUANTUM = Decimal("0.01")
 
@@ -28,7 +28,7 @@ class InvalidMoneyValueError(MoneyError, ValueError, TypeError):
     """Valor monetário inválido (inclui uso proibido de ``float``)."""
 
 
-MoneyInput = str | int | Decimal | "Money" | Any
+MoneyInput = Union[str, int, Decimal, "Money"]
 
 
 def _string_to_decimal(value: str) -> Decimal:
