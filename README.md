@@ -100,8 +100,13 @@ test/
 ```
 
 A especificação funcional inicial está em `specs/SPEC-001-financial-control.md` e contém
-os requisitos RF-001 a RF-006. Agentes de IA atuam como camada de revisão; regras de
-autoridade e contexto estão em `AGENTS.md`.
+os requisitos RF-001 a RF-006. Agentes de IA atuam como camada de revisão.
+
+## Regras de codificação para IA
+
+`AGENTS.md` é a fonte única das regras de codificação (estilo, arquitetura, dinheiro,
+erros, testes, segurança e fluxo de PR). As demais ferramentas apenas apontam para ele:
+`CLAUDE.md`, `.cursor/rules/coding-rules.mdc` e `.github/copilot-instructions.md`.
 
 ## ADRs
 

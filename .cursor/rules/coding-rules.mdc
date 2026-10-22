@@ -1,0 +1,17 @@
+---
+description: Regras de codificação do projeto (fonte única em AGENTS.md)
+globs:
+  - "**/*.py"
+alwaysApply: true
+---
+
+A fonte única das regras é `AGENTS.md`. Leia o arquivo completo antes de gerar ou alterar
+código. Em caso de divergência, vale `AGENTS.md`.
+
+Resumo não normativo:
+
+- Dinheiro usa `Decimal` ou centavos inteiros; `float` é proibido no domínio (RNF-FIN-001).
+- `mypy --strict`, `black` 88 e `isort`; Python 3.12, layout `src/`.
+- Camadas: `views -> controllers -> services -> repositories`, com `models`/`shared` como
+  folhas; `services` não importam Streamlit.
+- Toda mudança de comportamento exige teste; cobertura mínima de 85% com branch.
