@@ -1,4 +1,11 @@
-"""Entidade de domínio para categorias financeiras.
+"""Entidade de domínio para categorias financeiras (RF-003)."""
 
-Implementação será introduzida a partir de RF-003 após aprovação da SPEC.
-"""
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, slots=True)
+class Category:
+    """Categoria que pode ser associada a uma transação."""
+
+    id: int
+    name: str
