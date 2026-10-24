@@ -14,3 +14,9 @@
 ## 0.1.3
 - contratos `TransactionRepository` e `CategoryRepository` com adaptadores em memória e
   Supabase (RF-001, RF-002, RF-003; ADR-004, ADR-006 proposta).
+
+## 0.1.4
+- serviço de transações em `src/services/transaction_service.py` (RF-001, RF-002, RF-003):
+  `TransactionService` registra receitas e despesas com valor decimal exato (rejeitando
+  `float`), data válida e categoria opcional validada, e categoriza transação existente
+  recusando transação ou categoria inexistentes sem alterar valor, tipo ou data.
