@@ -14,3 +14,8 @@
 ## 0.1.3
 - contratos `TransactionRepository` e `CategoryRepository` com adaptadores em memória e
   Supabase (RF-001, RF-002, RF-003; ADR-004, ADR-006 proposta).
+
+## 0.1.4
+- serviço de saldo consolidado em `src/services/balance_service.py` (RF-004):
+  `BalanceService` calcula receitas menos despesas a partir do repositório de transações,
+  com precisão decimal exata, saldo zero quando vazio e cada transação contada uma vez.
