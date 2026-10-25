@@ -3,9 +3,11 @@
 from dataclasses import replace
 from itertools import count
 
+from models.budget import Budget
 from models.category import Category
 from models.transaction import Transaction
 from shared.errors import NotFoundError, ValidationError
+from shared.period import YearMonth
 
 
 class InMemoryTransactionRepository:
@@ -53,3 +55,24 @@ class InMemoryCategoryRepository:
 
     def list_all(self) -> tuple[Category, ...]:
         return tuple(sorted(self._categories.values(), key=lambda c: c.name))
+
+
+class InMemoryBudgetRepository:
+    """Repositório determinístico indexado pelo período mensal.
+
+    Mantém a invariante de RF-006 (no máximo um orçamento vigente por período)
+    enquanto a persistência SQLite descrita na ADR-001 não for implementada.
+    """
+
+    def __init__(self) -> None:
+        self._budgets: dict[YearMonth, Budget] = {}
+
+    def save(self, budget: Budget) -> None:
+        self._budgets[budget.period] = budget
+
+    def get(self, period: YearMonth) -> Budget | None:
+        return self._budgets.get(period)
+
+    def list_periods(self) -> tuple[YearMonth, ...]:
+        ordered = sorted(self._budgets, key=lambda period: (period.year, period.month))
+        return tuple(ordered)

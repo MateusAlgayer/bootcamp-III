@@ -14,3 +14,8 @@
 ## 0.1.3
 - contratos `TransactionRepository` e `CategoryRepository` com adaptadores em memória e
   Supabase (RF-001, RF-002, RF-003; ADR-004, ADR-006 proposta).
+
+## 0.1.4
+- cálculo de saldo consolidado como receitas menos despesas em `balance_service` (RF-004);
+- resumo mensal de receitas, despesas e saldo em `monthly_summary_service`, controller do
+  dashboard e view `dashboard` (RF-005; RNF-FIN-001).
