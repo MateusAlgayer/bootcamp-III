@@ -19,3 +19,9 @@
 - cálculo de saldo consolidado como receitas menos despesas em `balance_service` (RF-004);
 - resumo mensal de receitas, despesas e saldo em `monthly_summary_service`, controller do
   dashboard e view `dashboard` (RF-005; RNF-FIN-001).
+
+## 0.1.5
+- serviço de transações em `src/services/transaction_service.py` (RF-001, RF-002, RF-003):
+  `TransactionService` registra receitas e despesas com valor decimal exato (rejeitando
+  `float`), data válida e categoria opcional validada, e categoriza transação existente
+  recusando transação ou categoria inexistentes sem alterar valor, tipo ou data.
