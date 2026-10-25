@@ -25,3 +25,14 @@
   `TransactionService` registra receitas e despesas com valor decimal exato (rejeitando
   `float`), data válida e categoria opcional validada, e categoriza transação existente
   recusando transação ou categoria inexistentes sem alterar valor, tipo ou data.
+
+## 0.1.6
+- controllers coordenam serviços e views sem regra de negócio própria (ADR-001); erros de
+  domínio chegam à view como `DomainError` (ADR-004):
+  - `TransactionController` registra receitas/despesas e categoriza transações
+    (RF-001, RF-002, RF-003);
+  - `DashboardController` passa a expor o saldo consolidado (RF-004) além do resumo
+    mensal (RF-005);
+  - `BudgetController.compare_with_expenses` compara o orçamento com as despesas
+    registradas no período, obtidas do resumo mensal, em vez de um valor digitado na UI
+    (RF-006).

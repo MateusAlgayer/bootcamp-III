@@ -6,6 +6,7 @@ import pytest
 from controllers.dashboard_controller import DashboardController
 from models.transaction import Transaction, TransactionType
 from repositories.memory import InMemoryTransactionRepository
+from services.balance_service import BalanceService
 from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import ValidationError
 
@@ -35,7 +36,9 @@ def repository() -> InMemoryTransactionRepository:
 
 @pytest.fixture
 def controller(repository) -> DashboardController:
-    return DashboardController(MonthlySummaryService(repository))
+    return DashboardController(
+        MonthlySummaryService(repository), BalanceService(repository)
+    )
 
 
 @pytest.mark.unit
@@ -77,3 +80,25 @@ def test_monthly_summary_rejects_invalid_month(controller):
 def test_monthly_summary_rejects_invalid_year(controller):
     with pytest.raises(ValidationError, match="ano"):
         controller.monthly_summary(0, 1)
+
+
+@pytest.mark.unit
+def test_consolidated_balance_is_zero_without_transactions(controller):
+    assert controller.consolidated_balance() == Decimal("0.00")
+
+
+@pytest.mark.unit
+def test_consolidated_balance_considers_all_months(controller, repository):
+    _add(repository, TransactionType.INCOME, "1000.00", month=1)
+    _add(repository, TransactionType.EXPENSE, "250.10", month=2)
+    _add(repository, TransactionType.INCOME, "0.10", year=2025, month=12)
+
+    assert controller.consolidated_balance() == Decimal("750.00")
+
+
+@pytest.mark.unit
+def test_consolidated_balance_can_be_negative(controller, repository):
+    _add(repository, TransactionType.INCOME, "100.00")
+    _add(repository, TransactionType.EXPENSE, "150.25")
+
+    assert controller.consolidated_balance() == Decimal("-50.25")
