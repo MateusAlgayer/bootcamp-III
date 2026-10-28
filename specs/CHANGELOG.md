@@ -16,10 +16,23 @@
   Supabase (RF-001, RF-002, RF-003; ADR-004, ADR-006 proposta).
 
 ## 0.1.4
+- cálculo de saldo consolidado como receitas menos despesas em `balance_service` (RF-004);
+- resumo mensal de receitas, despesas e saldo em `monthly_summary_service`, controller do
+  dashboard e view `dashboard` (RF-005; RNF-FIN-001).
+
+## 0.1.5
 - serviço de transações em `src/services/transaction_service.py` (RF-001, RF-002, RF-003):
   `TransactionService` registra receitas e despesas com valor decimal exato (rejeitando
   `float`), data válida e categoria opcional validada, e categoriza transação existente
   recusando transação ou categoria inexistentes sem alterar valor, tipo ou data.
-- serviço de saldo consolidado em `src/services/balance_service.py` (RF-004):
-  `BalanceService` calcula receitas menos despesas a partir do repositório de transações,
-  com precisão decimal exata, saldo zero quando vazio e cada transação contada uma vez.
+
+## 0.1.6
+- controllers coordenam serviços e views sem regra de negócio própria (ADR-001); erros de
+  domínio chegam à view como `DomainError` (ADR-004):
+  - `TransactionController` registra receitas/despesas e categoriza transações
+    (RF-001, RF-002, RF-003);
+  - `DashboardController` passa a expor o saldo consolidado (RF-004) além do resumo
+    mensal (RF-005);
+  - `BudgetController.compare_with_expenses` compara o orçamento com as despesas
+    registradas no período, obtidas do resumo mensal, em vez de um valor digitado na UI
+    (RF-006).

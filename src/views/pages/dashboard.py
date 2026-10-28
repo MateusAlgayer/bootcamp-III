@@ -7,6 +7,7 @@ import streamlit as st
 
 from controllers.dashboard_controller import DashboardController
 from repositories.memory import InMemoryTransactionRepository
+from services.balance_service import BalanceService
 from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import DomainError
 
@@ -20,7 +21,9 @@ def _controller() -> DashboardController:
     repository: InMemoryTransactionRepository = st.session_state[
         "transaction_repository"
     ]
-    return DashboardController(MonthlySummaryService(repository))
+    return DashboardController(
+        MonthlySummaryService(repository), BalanceService(repository)
+    )
 
 
 def _format_money(value: Decimal) -> str:

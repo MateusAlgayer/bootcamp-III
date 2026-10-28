@@ -6,20 +6,28 @@ import streamlit as st
 
 from controllers.budget_controller import BudgetController
 from models.budget import BudgetComparison
-from repositories.memory import InMemoryBudgetRepository
+from repositories.memory import (
+    InMemoryBudgetRepository,
+    InMemoryTransactionRepository,
+)
 from services.budget_service import BudgetService
+from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import DomainError
 
 PAGE_TITLE = "Orçamento mensal"
 LIMIT_LABEL = "Limite mensal (ex.: 1500.00)"
-SPENT_LABEL = "Despesas do período (ex.: 350.50)"
 
 
 def _controller() -> BudgetController:
     if "budget_repository" not in st.session_state:
         st.session_state["budget_repository"] = InMemoryBudgetRepository()
-    repository: InMemoryBudgetRepository = st.session_state["budget_repository"]
-    return BudgetController(BudgetService(repository))
+    if "transaction_repository" not in st.session_state:
+        st.session_state["transaction_repository"] = InMemoryTransactionRepository()
+    budgets: InMemoryBudgetRepository = st.session_state["budget_repository"]
+    transactions: InMemoryTransactionRepository = st.session_state[
+        "transaction_repository"
+    ]
+    return BudgetController(BudgetService(budgets), MonthlySummaryService(transactions))
 
 
 def _render_comparison(comparison: BudgetComparison) -> None:
@@ -68,10 +76,9 @@ def render() -> None:
     else:
         st.metric("Orçamento vigente", f"R$ {current_budget.limit:.2f}")
 
-    spent_text = st.text_input(SPENT_LABEL, value="", key="budget_spent")
     if st.button("Comparar com despesas", key="budget_compare"):
         try:
-            comparison = controller.compare_with_expenses(year, month, spent_text)
+            comparison = controller.compare_with_expenses(year, month)
         except DomainError as error:
             st.error(str(error))
         else:
