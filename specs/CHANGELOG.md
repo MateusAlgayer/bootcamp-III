@@ -16,6 +16,6 @@
   Supabase (RF-001, RF-002, RF-003; ADR-004, ADR-006 proposta).
 
 ## 0.1.4
-- cálculo de saldo consolidado como receitas menos despesas em `balance_service` (RF-004);
-- resumo mensal de receitas, despesas e saldo em `monthly_summary_service`, controller do
-  dashboard e view `dashboard` (RF-005; RNF-FIN-001).
+- serviço de saldo consolidado em `src/services/balance_service.py` (RF-004):
+  `BalanceService` calcula receitas menos despesas a partir do repositório de transações,
+  com precisão decimal exata, saldo zero quando vazio e cada transação contada uma vez.
