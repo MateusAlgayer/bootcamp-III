@@ -20,3 +20,6 @@
   `TransactionService` registra receitas e despesas com valor decimal exato (rejeitando
   `float`), data válida e categoria opcional validada, e categoriza transação existente
   recusando transação ou categoria inexistentes sem alterar valor, tipo ou data.
+- serviço de saldo consolidado em `src/services/balance_service.py` (RF-004):
+  `BalanceService` calcula receitas menos despesas a partir do repositório de transações,
+  com precisão decimal exata, saldo zero quando vazio e cada transação contada uma vez.
