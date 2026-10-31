@@ -1,27 +1,28 @@
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from models.budget import Budget
 from repositories.contracts import BudgetRepository
 from repositories.memory import InMemoryBudgetRepository
+from repositories.sqlite import SQLiteBudgetRepository, SQLiteDatabase
 from shared.period import YearMonth
-
-REPOSITORY_FACTORIES = [InMemoryBudgetRepository]
-REPOSITORY_IDS = ["memory"]
 
 JANUARY = YearMonth(year=2026, month=1)
 FEBRUARY = YearMonth(year=2026, month=2)
 MARCH = YearMonth(year=2026, month=3)
 
 
-@pytest.fixture(params=REPOSITORY_FACTORIES, ids=REPOSITORY_IDS)
-def repository(request) -> BudgetRepository:
-    return request.param()
+@pytest.fixture(params=["memory", "sqlite"])
+def repository(request: pytest.FixtureRequest, tmp_path: Path) -> BudgetRepository:
+    if request.param == "memory":
+        return InMemoryBudgetRepository()
+    return SQLiteBudgetRepository(SQLiteDatabase(tmp_path / "finance.db"))
 
 
 @pytest.mark.contract
-def test_save_then_get_returns_stored_budget(repository):
+def test_save_then_get_returns_stored_budget(repository: BudgetRepository) -> None:
     budget = Budget(period=JANUARY, limit=Decimal("1500.00"))
 
     repository.save(budget)
@@ -30,12 +31,12 @@ def test_save_then_get_returns_stored_budget(repository):
 
 
 @pytest.mark.contract
-def test_get_unknown_period_returns_none(repository):
+def test_get_unknown_period_returns_none(repository: BudgetRepository) -> None:
     assert repository.get(JANUARY) is None
 
 
 @pytest.mark.contract
-def test_save_replaces_budget_of_same_period(repository):
+def test_save_replaces_budget_of_same_period(repository: BudgetRepository) -> None:
     repository.save(Budget(period=JANUARY, limit=Decimal("1000.00")))
     repository.save(Budget(period=JANUARY, limit=Decimal("1200.00")))
 
@@ -47,7 +48,9 @@ def test_save_replaces_budget_of_same_period(repository):
 
 
 @pytest.mark.contract
-def test_list_periods_returns_chronological_order(repository):
+def test_list_periods_returns_chronological_order(
+    repository: BudgetRepository,
+) -> None:
     repository.save(Budget(period=MARCH, limit=Decimal("300.00")))
     repository.save(Budget(period=JANUARY, limit=Decimal("100.00")))
     repository.save(Budget(period=FEBRUARY, limit=Decimal("200.00")))
@@ -56,7 +59,9 @@ def test_list_periods_returns_chronological_order(repository):
 
 
 @pytest.mark.contract
-def test_saved_budget_preserves_decimal_limit(repository):
+def test_saved_budget_preserves_decimal_limit(
+    repository: BudgetRepository,
+) -> None:
     repository.save(Budget(period=JANUARY, limit=Decimal("999.99")))
 
     stored = repository.get(JANUARY)

@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    image: bootcamp-iii:local
+    init: true
+    ports:
+      - "8501:8501"
+    environment:
+      DATABASE_PATH: /app/data/finance.db
+    volumes:
+      - finance-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  finance-data:

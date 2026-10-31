@@ -113,3 +113,19 @@ def test_categorize_rejects_unknown_category(
         controller.categorize(stored.id, 999)
 
     assert transactions.get(stored.id) == stored
+
+
+@pytest.mark.unit
+def test_list_transactions_returns_registered_transactions(
+    controller: TransactionController,
+) -> None:
+    stored = controller.register_expense("42.50", TODAY, "Feira")
+
+    assert controller.list_transactions() == (stored,)
+
+
+@pytest.mark.unit
+def test_list_categories_returns_available_categories(
+    controller: TransactionController,
+) -> None:
+    assert controller.list_categories() == (Category(id=1, name="Mercado"),)

@@ -47,7 +47,10 @@ configuração paralela nem exceções locais.
 - `services`, `models`, `repositories` e `shared` não importam `streamlit` (RNF-TEST-001).
 - `views` só apresenta dados e chama controllers; nenhuma regra financeira na view.
 - Contratos de persistência ficam em `repositories/contracts.py`; a implementação concreta em
-  `repositories/sqlite.py`. SQL não sai da camada `repositories`.
+  `repositories/sqlite.py`, com esquema em `repositories/sqlite_schema.sql`. SQL não sai da
+  camada `repositories`.
+- O banco local fica em `DATABASE_PATH` (padrão `data/finance.db`) e é persistido pelo volume
+  `finance-data` do Docker Compose. O adaptador em memória é restrito a testes.
 - Erros técnicos são reencapsulados antes de cruzar a fronteira do repositório (ADR-004).
 - Não introduza camada, padrão ou abstração nova sem ADR correspondente.
 

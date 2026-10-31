@@ -30,18 +30,36 @@ pip install -e ".[dev]"
 
 ## Rodando o projeto
 
-Rode o frontend (Streamlit):
+### Docker Compose (recomendado)
+
+```bash
+docker compose up --build
+```
+
+A aplicação fica disponível em <http://localhost:8501>. Os dados são gravados no volume
+nomeado `finance-data`, então continuam disponíveis depois de `docker compose down`. Para
+apagar o banco local, use `docker compose down -v`.
+
+### Execução local
 
 ```bash
 streamlit run src/views/home.py
 ```
 
-Ou via Docker:
+O banco SQLite é criado automaticamente em `data/finance.db`. Para usar outro caminho:
 
 ```bash
-docker build -t bootcamp-iii .
-docker run -p 80:80 bootcamp-iii
+DATABASE_PATH=/caminho/para/finance.db streamlit run src/views/home.py
 ```
+
+### Persistência
+
+A aplicação usa SQLite local (ADR-007). O esquema fica em
+`src/repositories/sqlite_schema.sql` e é aplicado automaticamente no primeiro acesso. As
+categorias iniciais também são semeadas automaticamente, sem duplicação.
+
+Para fazer backup, copie o arquivo apontado por `DATABASE_PATH` (no Compose, o volume
+`finance-data`).
 
 ## Ferramentas de desenvolvimento
 
@@ -117,3 +135,5 @@ Decisões arquiteturais relevantes ficam registradas em `docs/adr/`:
 - [ADR-003 — Agentes de IA como camada de revisão](docs/adr/ADR-003-ai-review-layer.md)
 - [ADR-004 — Hierarquia de exceções de domínio/aplicação](docs/adr/ADR-004-domain-error-handling.md)
 - [ADR-005 — Gates de qualidade e segurança como política de CI](docs/adr/ADR-005-ci-quality-security-gates.md)
+- [ADR-006 — Supabase como banco principal (substituída)](docs/adr/ADR-006-supabase-persistence.md)
+- [ADR-007 — Persistência local em SQLite com Docker Compose](docs/adr/ADR-007-sqlite-local-persistence.md)

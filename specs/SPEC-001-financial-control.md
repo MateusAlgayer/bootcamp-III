@@ -1,7 +1,7 @@
 # SPEC-001 — Controle Financeiro Web
 
-Status: **Draft**
-Versão: **0.1.0**
+Status: **Implementado (Entrega 1)**
+Versão: **0.1.13**
 
 ## 1. Objetivo
 
@@ -97,7 +97,40 @@ modificar a especificação silenciosamente nem aprovar merge em substituição 
 - machine learning;
 - agentes alterando código de produção de forma autônoma.
 
-## 5. Próximos refinamentos
+## 5. Estado de implementação (Entrega 1)
 
-Os contratos de entidades, repositórios, erros e interface serão refinados antes de cada
-implementação. Toda mudança deverá ser registrada em `specs/CHANGELOG.md`.
+Os critérios de aceite das seções 2 e 3 não foram alterados. O estado abaixo reflete a
+implementação verificada pelos gates locais.
+
+| Requisito | Estado | Evidência principal |
+|---|---|---|
+| RF-001 | Implementado | `transaction_service`, `transaction_controller`, view `transactions` e persistência SQLite; testes unitários, de contrato e de integração |
+| RF-002 | Implementado | mesmo fluxo do RF-001 para despesas |
+| RF-003 | Implementado | categorização no service/controller, na view `transactions` e persistência SQLite; testes unitários e de integração |
+| RF-004 | Implementado no domínio/controller | `balance_service` e `DashboardController.consolidated_balance`; sem tela dedicada |
+| RF-005 | Implementado | `monthly_summary_service`, `DashboardController` e view `dashboard` |
+| RF-006 | Implementado | `budget_service`, `BudgetController`, view `budget` e persistência SQLite |
+| RNF-FIN-001 | Implementado | `shared.money` com `Decimal`/`Money`; centavos inteiros no SQLite; `float` rejeitado |
+| RNF-TEST-001 | Implementado | testes unitários sem Streamlit; UI exercitada com `streamlit.testing.v1.AppTest` |
+| RNF-SDD-001 | Implementado | `specs/TRACEABILITY.md` e `specs/CHANGELOG.md` |
+| RNF-AI-001 | Em processo | `AGENTS.md` e ADR-003; revisão e merge permanecem humanos |
+
+### 5.1 Pendências conhecidas
+
+- **Persistência:** a aplicação usa SQLite local em `DATABASE_PATH` (padrão
+  `data/finance.db`), criado automaticamente a partir de `repositories/sqlite_schema.sql`.
+  O Docker Compose persiste o arquivo no volume `finance-data`. O adaptador em memória
+  permanece restrito a testes.
+- **Categorias:** as categorias iniciais são semeadas automaticamente; não há CRUD de
+  categorias previsto nesta SPEC.
+- **RF-004 na UI:** o saldo consolidado é calculado, mas nenhuma tela o apresenta; a UI
+  mostra o saldo mensal do RF-005.
+- **Migrações:** o esquema é criado com `CREATE TABLE IF NOT EXISTS`; evoluções futuras
+  exigem migração manual/versionada.
+- **ADRs:** ADR-001 a ADR-005 e ADR-007 estão aceitas; a ADR-006 (Supabase) foi substituída
+  pela ADR-007 (SQLite local).
+
+## 6. Próximos refinamentos
+
+Mudanças de requisito continuam exigindo atualização explícita desta SPEC e registro em
+`specs/CHANGELOG.md`.

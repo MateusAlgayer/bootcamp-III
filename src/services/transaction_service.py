@@ -64,6 +64,14 @@ class TransactionService:
         self._require_category(category_id)
         return self._transactions.set_category(transaction_id, category_id)
 
+    def list_transactions(self) -> tuple[Transaction, ...]:
+        """Lista as transações registradas para apresentação (RF-001, RF-002)."""
+        return self._transactions.list_all()
+
+    def list_categories(self) -> tuple[Category, ...]:
+        """Lista as categorias disponíveis para seleção na UI (RF-003)."""
+        return self._categories.list_all()
+
     def _register(
         self,
         kind: TransactionType,
