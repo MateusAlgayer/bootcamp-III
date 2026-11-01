@@ -4,13 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bootcamp-iii"
-version = "0.1.0"
+version = "1.0.0"
 description = "Repositório para tarefas relacionadas a disciplina de bootcamp III"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "streamlit",
-    "supabase>=2.33,<3",
 ]
 
 [project.optional-dependencies]
@@ -41,6 +40,9 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+repositories = ["*.sql"]
 
 [tool.black]
 line-length = 88

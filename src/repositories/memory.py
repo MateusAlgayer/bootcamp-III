@@ -1,4 +1,8 @@
-"""Adaptadores em memória dos repositórios, determinísticos para testes."""
+"""Adaptadores em memória dos repositórios, determinísticos para testes.
+
+A aplicação persiste em SQLite (ADR-007); estes adaptadores permanecem restritos
+a testes e contratos.
+"""
 
 from dataclasses import replace
 from itertools import count
@@ -61,7 +65,7 @@ class InMemoryBudgetRepository:
     """Repositório determinístico indexado pelo período mensal.
 
     Mantém a invariante de RF-006 (no máximo um orçamento vigente por período)
-    enquanto a persistência SQLite descrita na ADR-001 não for implementada.
+    para os testes; a aplicação persiste em SQLite (ADR-007).
     """
 
     def __init__(self) -> None:

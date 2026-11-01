@@ -1,47 +1,47 @@
 """View do resumo financeiro mensal (RF-005)."""
 
 from datetime import date
-from decimal import Decimal
 
 import streamlit as st
 
 from controllers.dashboard_controller import DashboardController
-from repositories.memory import InMemoryTransactionRepository
 from services.balance_service import BalanceService
 from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import DomainError
+from views.bootstrap import get_repositories
+from views.formatting import format_currency
 
-PAGE_TITLE = "Resumo mensal"
+PAGE_TITLE = "📊 Resumo mensal"
 EMPTY_MONTH_MESSAGE = "Nenhuma movimentação no período selecionado."
+INCOME_LABEL = "📈 Receitas"
+EXPENSE_LABEL = "📉 Despesas"
+BALANCE_LABEL = "💰 Saldo"
 
 
 def _controller() -> DashboardController:
-    if "transaction_repository" not in st.session_state:
-        st.session_state["transaction_repository"] = InMemoryTransactionRepository()
-    repository: InMemoryTransactionRepository = st.session_state[
-        "transaction_repository"
-    ]
+    repository = get_repositories().transactions
     return DashboardController(
         MonthlySummaryService(repository), BalanceService(repository)
     )
 
 
-def _format_money(value: Decimal) -> str:
-    return f"R$ {value:.2f}"
-
-
 def render() -> None:
     """Renderiza receitas, despesas e saldo do mês selecionado."""
+    st.set_page_config(page_title=PAGE_TITLE, page_icon="📊", layout="wide")
     st.title(PAGE_TITLE)
-    controller = _controller()
+    try:
+        controller = _controller()
+    except DomainError as error:
+        st.error(str(error))
+        return
     today = date.today()
 
     col_year, col_month = st.columns(2)
     year_input = col_year.number_input(
-        "Ano", min_value=1, max_value=9999, value=today.year, step=1
+        "🗓️ Ano", min_value=1, max_value=9999, value=today.year, step=1
     )
     month_input = col_month.number_input(
-        "Mês", min_value=1, max_value=12, value=today.month, step=1
+        "📅 Mês", min_value=1, max_value=12, value=today.month, step=1
     )
     year = int(year_input)
     month = int(month_input)
@@ -52,9 +52,10 @@ def render() -> None:
         st.error(str(error))
         return
 
-    st.metric("Receitas", _format_money(summary.income))
-    st.metric("Despesas", _format_money(summary.expenses))
-    st.metric("Saldo", _format_money(summary.balance))
+    col_income, col_expense, col_balance = st.columns(3)
+    col_income.metric(INCOME_LABEL, format_currency(summary.income))
+    col_expense.metric(EXPENSE_LABEL, format_currency(summary.expenses))
+    col_balance.metric(BALANCE_LABEL, format_currency(summary.balance))
 
     if summary.income == 0 and summary.expenses == 0:
         st.info(EMPTY_MONTH_MESSAGE)

@@ -1,6 +1,6 @@
 # ADR-004 — Hierarquia de exceções de domínio/aplicação
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Contexto:** `shared/errors.py` está vazio; regras de RF-001, RF-002, RF-003 e RF-006 geram
   falhas que precisam chegar de `services` a `controllers` e à view sem expor exceções técnicas
   de infraestrutura.

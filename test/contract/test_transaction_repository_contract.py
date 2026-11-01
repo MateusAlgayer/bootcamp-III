@@ -3,8 +3,7 @@
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from test.fixtures.mock_supabase import MockSupabaseClient
-from typing import Callable
+from pathlib import Path
 
 import pytest
 
@@ -15,9 +14,10 @@ from repositories.memory import (
     InMemoryCategoryRepository,
     InMemoryTransactionRepository,
 )
-from repositories.supabase_adapter import (
-    SupabaseCategoryRepository,
-    SupabaseTransactionRepository,
+from repositories.sqlite import (
+    SQLiteCategoryRepository,
+    SQLiteDatabase,
+    SQLiteTransactionRepository,
 )
 from shared.errors import NotFoundError, ValidationError
 
@@ -36,21 +36,20 @@ def _memory() -> Repositories:
     )
 
 
-def _supabase() -> Repositories:
-    client = MockSupabaseClient(categories=tuple((c.id, c.name) for c in CATEGORIES))
+def _sqlite(tmp_path: Path) -> Repositories:
+    database = SQLiteDatabase(tmp_path / "finance.db")
+    database.seed_categories(category.name for category in CATEGORIES)
     return Repositories(
-        SupabaseTransactionRepository(client),
-        SupabaseCategoryRepository(client),
+        SQLiteTransactionRepository(database),
+        SQLiteCategoryRepository(database),
     )
 
 
-FACTORIES: list[Callable[[], Repositories]] = [_memory, _supabase]
-
-
-@pytest.fixture(params=FACTORIES, ids=["memory", "supabase"])
-def repos(request: pytest.FixtureRequest) -> Repositories:
-    factory: Callable[[], Repositories] = request.param
-    return factory()
+@pytest.fixture(params=["memory", "sqlite"])
+def repos(request: pytest.FixtureRequest, tmp_path: Path) -> Repositories:
+    if request.param == "memory":
+        return _memory()
+    return _sqlite(tmp_path)
 
 
 def _expense(amount: str = "50.00", on: date = date(2026, 1, 10)) -> Transaction:

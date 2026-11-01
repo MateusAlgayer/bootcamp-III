@@ -1,6 +1,6 @@
 # ADR-005 — Gates de qualidade e segurança como política de CI
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Contexto:** `pyproject.toml` e `.github/workflows/ci.yml` já aplicam lint/formatação, `mypy
   --strict`, SAST (`bandit`), SCA (`pip-audit`), SBOM e cobertura mínima de testes, mas o racional
   dessa política não estava registrado.

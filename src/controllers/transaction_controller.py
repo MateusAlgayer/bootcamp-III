@@ -2,6 +2,7 @@
 
 from datetime import date
 
+from models.category import Category
 from models.transaction import Transaction
 from services.transaction_service import TransactionService
 
@@ -43,3 +44,11 @@ class TransactionController:
     def categorize(self, transaction_id: int, category_id: int) -> Transaction:
         """Associa a categoria escolhida na UI a uma transação existente (RF-003)."""
         return self._service.categorize(transaction_id, category_id)
+
+    def list_transactions(self) -> tuple[Transaction, ...]:
+        """Lista as transações registradas para exibição (RF-001, RF-002)."""
+        return self._service.list_transactions()
+
+    def list_categories(self) -> tuple[Category, ...]:
+        """Lista as categorias disponíveis para seleção na UI (RF-003)."""
+        return self._service.list_categories()

@@ -221,3 +221,26 @@ def test_categorize_rejects_unknown_category_without_changing_transaction(
         service.categorize(stored.id, 999)
 
     assert transactions.get(stored.id) == stored
+
+
+# ---------------------------------------------------------------------- #
+# Consultas para a UI
+# ---------------------------------------------------------------------- #
+@pytest.mark.unit
+def test_list_transactions_returns_registered_in_date_order(
+    service: TransactionService,
+) -> None:
+    later = service.register_expense("10.00", date(2026, 1, 20), "Feira")
+    earlier = service.register_income("20.00", date(2026, 1, 5), "Salário")
+
+    assert service.list_transactions() == (earlier, later)
+
+
+@pytest.mark.unit
+def test_list_categories_returns_sorted_categories(
+    service: TransactionService,
+) -> None:
+    assert service.list_categories() == (
+        Category(id=2, name="Aluguel"),
+        Category(id=1, name="Mercado"),
+    )
