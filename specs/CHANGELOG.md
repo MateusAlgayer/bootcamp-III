@@ -80,3 +80,12 @@
 - Supabase removido do código, das dependências e dos testes; ADR-006 marcada como
   substituída pela ADR-007;
 - categorias iniciais semeadas automaticamente no primeiro acesso.
+
+## 0.1.14
+- corrigido o erro `'repositories' is not a package` ao navegar pelas páginas: o módulo de
+  composição das views foi renomeado de `views/repositories.py` para `views/bootstrap.py`,
+  pois o Streamlit insere `src/views` no início do `sys.path` e o nome sombreava o pacote
+  `repositories` (sem alteração de requisito funcional);
+- teste de regressão garante que as páginas importam com o `sys.path` usado pelo Streamlit;
+- imagem Docker passa a instalar o projeto em modo editável, garantindo que runtime e
+  `site-packages` usem o mesmo `/app/src`.

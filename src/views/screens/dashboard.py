@@ -8,8 +8,8 @@ from controllers.dashboard_controller import DashboardController
 from services.balance_service import BalanceService
 from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import DomainError
+from views.bootstrap import get_repositories
 from views.formatting import format_currency
-from views.repositories import get_repositories
 
 PAGE_TITLE = "📊 Resumo mensal"
 EMPTY_MONTH_MESSAGE = "Nenhuma movimentação no período selecionado."

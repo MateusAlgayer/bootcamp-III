@@ -9,8 +9,8 @@ from models.category import Category
 from models.transaction import Transaction, TransactionType
 from services.transaction_service import TransactionService
 from shared.errors import DomainError
+from views.bootstrap import get_repositories
 from views.formatting import format_currency
-from views.repositories import get_repositories
 
 PAGE_TITLE = "🧾 Transações"
 INCOME_LABEL = "📈 Receita"

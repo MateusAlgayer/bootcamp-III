@@ -1,4 +1,10 @@
-"""Composição dos repositórios SQLite usados pelas views."""
+"""Composição dos repositórios SQLite usados pelas views.
+
+O nome do módulo não pode coincidir com o nome de um pacote de domínio
+(``repositories``, ``services``, ``models``, ``shared``): o Streamlit insere
+``src/views`` no início do ``sys.path``, e a colisão passaria a resolver o
+módulo da view antes do pacote real.
+"""
 
 from __future__ import annotations
 

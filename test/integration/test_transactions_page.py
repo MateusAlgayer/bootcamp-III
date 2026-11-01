@@ -6,7 +6,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from models.transaction import Transaction, TransactionType
-from views.repositories import Repositories, build_repositories
+from views.bootstrap import Repositories, build_repositories
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 TRANSACTIONS_PAGE = ROOT_DIR / "src" / "views" / "screens" / "transactions.py"

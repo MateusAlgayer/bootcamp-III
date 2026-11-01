@@ -9,8 +9,8 @@ from models.budget import BudgetComparison
 from services.budget_service import BudgetService
 from services.monthly_summary_service import MonthlySummaryService
 from shared.errors import DomainError
+from views.bootstrap import get_repositories
 from views.formatting import format_currency, format_percentage
-from views.repositories import get_repositories
 
 PAGE_TITLE = "🎯 Orçamento mensal"
 LIMIT_LABEL = "💰 Limite mensal (ex.: 1500.00)"

@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    image: bootcamp-iii:local
+    image: bootcamp-iii:latest
     init: true
     ports:
       - "8501:8501"

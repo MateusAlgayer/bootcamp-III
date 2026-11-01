@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from views.repositories import (
+from views.bootstrap import (
     DEFAULT_CATEGORY_NAMES,
     DEFAULT_DATABASE_PATH,
     build_repositories,

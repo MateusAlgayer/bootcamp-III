@@ -9,7 +9,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 COPY pyproject.toml README.md ./
 COPY src ./src
 
-RUN pip install --no-cache-dir . \
+# Instalação editável: o runtime importa sempre /app/src, sem cópias divergentes
+# em site-packages.
+RUN pip install --no-cache-dir -e . \
     && mkdir -p /app/data
 
 EXPOSE 8501
