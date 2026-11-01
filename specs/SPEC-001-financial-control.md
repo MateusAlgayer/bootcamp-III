@@ -1,7 +1,7 @@
 # SPEC-001 — Controle Financeiro Web
 
 Status: **Implementado (Entrega 1)**
-Versão: **0.1.13**
+Versão: **1.0.0**
 
 ## 1. Objetivo
 

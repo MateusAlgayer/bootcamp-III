@@ -89,3 +89,11 @@
 - teste de regressão garante que as páginas importam com o `sys.path` usado pelo Streamlit;
 - imagem Docker passa a instalar o projeto em modo editável, garantindo que runtime e
   `site-packages` usem o mesmo `/app/src`.
+
+## 1.0.0
+- primeira versão estável (Entrega 1): RF-001 a RF-006, RNF-FIN-001, RNF-TEST-001 e
+  RNF-SDD-001 implementados; RNF-AI-001 em processo;
+- persistência local em SQLite (ADR-007), interface Streamlit e execução via Docker
+  Compose;
+- versão do projeto e da SPEC alinhadas em `1.0.0`, incluindo a correção de import das
+  views registrada em 0.1.14.
